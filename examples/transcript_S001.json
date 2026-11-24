@@ -1,0 +1,10 @@
+{
+  "student_id": "S001",
+  "records": [
+    {"record_id": "R1001", "course_id": "CS101", "start_date": "2022-09-01", "end_date": "2023-01-10", "passed": true},
+    {"record_id": "R1002", "course_id": "MA101", "start_date": "2022-09-01", "end_date": "2023-01-10", "passed": true},
+    {"record_id": "R1003", "course_id": "CS201", "start_date": "2023-03-01", "end_date": "2023-06-20", "passed": true},
+    {"record_id": "R1004", "course_id": "MA201", "start_date": "2023-03-01", "end_date": "2023-06-20", "passed": true},
+    {"record_id": "R1005", "course_id": "CS301", "start_date": "2023-09-01", "end_date": "2024-01-10", "passed": true}
+  ]
+}

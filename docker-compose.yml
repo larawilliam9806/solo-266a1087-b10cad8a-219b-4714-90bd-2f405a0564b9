@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    image: credit-recheck-web
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE: /data/app.db
+      BASE_DATA_FILE: /srv/app/data/base_data.json
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-prod}
+    volumes:
+      - app_data:/data
+    restart: unless-stopped
+
+volumes:
+  app_data:

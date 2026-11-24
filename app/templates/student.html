@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}学号 {{ s.student_id }} 的核定结果{% endblock %}
+{% block content %}
+<h1>学号 {{ s.student_id }}</h1>
+
+<div class="card">
+  <div>已认定总学分（核定底表）</div>
+  <div class="total">{{ s.total_credits }}</div>
+  {% if s.ledger_updated_at %}<div class="muted">底表更新时间：{{ s.ledger_updated_at }}</div>
+  {% else %}<div class="muted">该生暂无已入账成绩</div>{% endif %}
+</div>
+
+<div class="card">
+  <h3>已认定课程（同课只计一次）</h3>
+  {% if s.credited_courses %}
+  <table>
+    <tr><th>课程号</th><th>课程名</th><th>学分</th><th>计分依据单号</th></tr>
+    {% for c in s.credited_courses %}
+    <tr><td>{{ c.course_id }}</td><td>{{ c.name }}</td><td>{{ c.credits }}</td><td>{{ c.source_record_id }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="muted">暂无已认定课程。</p>{% endif %}
+</div>
+
+<div class="card">
+  <h3>逐单核对（前置课依据单号 / 缺项）</h3>
+  {% if s.records %}
+  <table>
+    <tr>
+      <th>单号</th><th>课程</th><th>开课日</th><th>结课日</th><th>通过</th>
+      <th>状态</th><th>修读合规</th><th>计入学分</th><th>前置课依据</th><th>操作</th>
+    </tr>
+    {% for r in s.records %}
+    <tr>
+      <td>{{ r.record_id }}</td>
+      <td>{{ r.course_id }} {{ r.course_name }}</td>
+      <td>{{ r.start_date }}</td>
+      <td>{{ r.end_date }}</td>
+      <td>{{ "是" if r.passed else "否" }}</td>
+      <td>{% if r.status == "revoked" %}<span class="bad">已撤销</span>{% else %}<span class="ok">有效</span>{% endif %}</td>
+      <td>
+        {% if r.status == "revoked" %}<span class="muted">—</span>
+        {% elif r.compliant %}<span class="ok">合规</span>
+        {% else %}<span class="bad">不合规</span>{% endif %}
+      </td>
+      <td>
+        {% if r.counted %}<span class="ok">计入</span>{% else %}<span class="muted">否</span>{% endif %}
+      </td>
+      <td>
+        {% if r.status == "revoked" %}<span class="muted">—</span>
+        {% elif r.evidence %}
+          <ul style="margin:0;padding-left:1.1em">
+          {% for e in r.evidence %}
+            <li>{{ e.prereq_course_id }} {{ e.prereq_name }}：
+              {% if e.missing %}<span class="bad">缺项</span>
+              {% else %}依据单号 <code>{{ e.record_id }}</code>{% endif %}
+            </li>
+          {% endfor %}
+          </ul>
+        {% else %}<span class="muted">无前置课</span>{% endif %}
+      </td>
+      <td>
+        {% if r.status != "revoked" %}
+        <form method="post" action="{{ url_for('main.revoke', record_id=r.record_id) }}"
+              onsubmit="return confirm('确认撤销单号 {{ r.record_id }}？撤销后将重核该生受影响课程。');">
+          <input type="hidden" name="student_id" value="{{ s.student_id }}">
+          <button class="btn-danger" type="submit">撤销</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="muted">该生暂无成绩单。</p>{% endif %}
+</div>
+{% endblock %}

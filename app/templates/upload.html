@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}上传成绩单{% endblock %}
+{% block content %}
+<h1>按学生分批上传 JSON 成绩单</h1>
+<div class="card">
+  <p>每批对应一名学生；每条记录含 <code>单号 record_id</code>、<code>课程 course_id</code>、
+     <code>开课日 start_date</code>、<code>结课日 end_date</code>、<code>是否通过 passed</code>。
+     同一单号再次上传即为<b>更正</b>；成绩与核定底表一并入账，失败则整体沿用原账。</p>
+  <form method="post" enctype="multipart/form-data">
+    <p>选择 JSON 文件：<input type="file" name="file" accept=".json,application/json"></p>
+    <p>或直接粘贴 JSON：</p>
+    <textarea name="payload" rows="14" placeholder='{
+  "student_id": "S001",
+  "records": [
+    {"record_id": "R1001", "course_id": "CS101", "start_date": "2022-09-01", "end_date": "2023-01-10", "passed": true}
+  ]
+}'></textarea>
+    <p><button type="submit">入账并复核该生</button></p>
+  </form>
+</div>
+{% endblock %}

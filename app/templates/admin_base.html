@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}底表管理{% endblock %}
+{% block content %}
+<h1>课程 / 学分 / 必修前置课底表</h1>
+
+<div class="card">
+  <h3>课程与学分（{{ courses|length }} 门）</h3>
+  {% if courses %}
+  <table>
+    <tr><th>课程号</th><th>课程名</th><th>学分</th></tr>
+    {% for c in courses %}<tr><td>{{ c.course_id }}</td><td>{{ c.name }}</td><td>{{ c.credits }}</td></tr>{% endfor %}
+  </table>
+  {% else %}<p class="muted">底表为空，请先导入。</p>{% endif %}
+</div>
+
+<div class="card">
+  <h3>必修前置课（{{ prereqs|length }} 条）</h3>
+  {% if prereqs %}
+  <table>
+    <tr><th>课程</th><th>必修前置课</th></tr>
+    {% for p in prereqs %}
+    <tr><td>{{ p.course_id }} {{ p.course_name }}</td><td>{{ p.prereq_course_id }} {{ p.prereq_name }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="muted">暂无前置课定义。</p>{% endif %}
+</div>
+
+<div class="card">
+  <h3>导入底表（一次性导入；重复导入按课程号更新，前置课去重追加）</h3>
+  <form method="post">
+    <textarea name="payload" rows="12" placeholder='{
+  "courses": [
+    {"course_id": "CS101", "name": "程序设计基础", "credits": 3}
+  ],
+  "prerequisites": [
+    {"course_id": "CS201", "prereq_course_id": "CS101"}
+  ]
+}'></textarea>
+    <p><button type="submit">导入底表</button></p>
+  </form>
+  <p class="muted">底表变更会在同一事务内重核全部已入账学生；失败则底表与账目均不变。</p>
+</div>
+{% endblock %}

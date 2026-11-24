@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>旧成绩补交 · 学分认定核对</h1>
+<div class="card">
+  <form method="get" action="{{ url_for('main.student_redirect') }}">
+    <label>学号：<input name="sid" required placeholder="如 S001"></label>
+    <button type="submit">查询</button>
+  </form>
+  <p class="muted">查询直接读取已生效的核定底表：总学分、已认定课程、逐单前置课依据单号或缺项。</p>
+</div>
+<div class="card">
+  <h3>流程</h3>
+  <ol>
+    <li>在「底表管理」一次性导入课程、学分与必修前置课（容器首启已自动导入内置底表）。</li>
+    <li>在「上传成绩单」按学生分批提交 JSON 成绩单；同号重传即为更正，查询页可按单号撤销。</li>
+    <li>修读合规 = 开课前已结课并通过全部必修前置课，且依据单本身也合规；合规且通过才计学分，同课只计一次。</li>
+  </ol>
+</div>
+{% endblock %}
